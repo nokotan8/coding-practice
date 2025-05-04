@@ -18,7 +18,7 @@ class Solution {
         std::unordered_set<int> visited;
         visited.insert(id);
 
-        for (int i = 0; i < level; i++) {
+        for (int i = 0; i < level && !queue.empty(); i++) {
             const int qsize = queue.size();
             for (int j = 0; j < qsize; j++) {
                 int curr = queue.front();
