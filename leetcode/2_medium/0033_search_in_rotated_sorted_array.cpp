@@ -8,26 +8,26 @@ class Solution {
             return nums[0] == target ? 0 : -1;
         }
 
-        size_t start;
-        for (size_t i = 1; i < n; i++) {
-            if (nums[i] < nums[i - 1]) {
-                start = i;
-                break;
-            }
-        }
-
         int lo = 0;
         int hi = (int)n - 1;
         while (lo <= hi) {
             int md = (lo + hi) / 2;
-            int real_md = (md + start) % n;
+            if (nums[md] == target) {
+                return md;
+            }
 
-            if (nums[real_md] == target) {
-                return real_md;
-            } else if (nums[real_md] > target) {
-                hi = md - 1;
+            if (nums[lo] <= nums[md]) {
+                if (nums[md] > target && target >= nums[lo]) {
+                    hi = md - 1;
+                } else {
+                    lo = md + 1;
+                }
             } else {
-                lo = md + 1;
+                if (nums[md] < target && target <= nums[hi]) {
+                    lo = md + 1;
+                } else {
+                    hi = md - 1;
+                }
             }
         }
 
