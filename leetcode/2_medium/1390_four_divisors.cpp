@@ -25,7 +25,7 @@ private:
         int res = 0;
         for (int num : nums) {
             int cb = (int)std::cbrt(num);
-            if (is_prime[cb] && cb * cb * cb == num) {
+            if (cb * cb * cb == num && is_prime[cb]) {
                 // p ^ 3
                 res += (1 + cb + cb * cb + num);
             } else {
