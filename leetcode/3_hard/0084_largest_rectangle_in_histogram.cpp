@@ -1,53 +1,85 @@
 #include <algorithm>
 #include <stack>
+#include <utility>
 #include <vector>
+using namespace std;
+
+/* One pass */
 class Solution {
-  public:
-    int largestRectangleArea(std::vector<int> &heights) {
-        const size_t n = heights.size();
-        if (n == 1)
-            return heights[0];
-        std::vector<int> left_max(n, -1);
-        std::vector<int> right_max(n, n);
-        std::stack<int> s;
-
-        for (size_t i = 0; i < n; i++) {
-            while (s.empty() == false && heights[s.top()] >= heights[i]) {
-                s.pop();
-            }
-
-            if (s.empty()) {
-                left_max[i] = 0;
-            } else {
-                left_max[i] = s.top() + 1;
-            }
-
-            s.push(i);
-        }
-
-        while (s.empty() == false)
-            s.pop();
-
-        for (int i = (int)n - 1; i >= 0; i--) {
-            while (s.empty() == false && heights[s.top()] >= heights[i]) {
-                s.pop();
-            }
-
-            if (s.empty()) {
-                right_max[i] = n - 1;
-            } else {
-                right_max[i] = s.top() - 1;
-            }
-
-            s.push(i);
-        }
-
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        const int n = heights.size();
+        stack<pair<int, int>> st; // index, height
         int res = 0;
-        for (size_t i = 0; i < n; i++) {
-            int area = heights[i] * (right_max[i] - left_max[i] + 1);
-            res = std::max(res, area);
+
+        st.emplace(0, heights[0]);
+
+        for (int i = 1; i < n; i++) {
+            int left = i;
+            while (st.size() && st.top().second >= heights[i]) {
+                res = max(res, st.top().second * (i - st.top().first));
+                left = st.top().first;
+                st.pop();
+            }
+
+            st.emplace(left, heights[i]);
+        }
+        while (st.size()) {
+            res = max(res, st.top().second * (n - st.top().first));
+            st.pop();
         }
 
         return res;
     }
 };
+
+/* Two pass */
+// class Solution {
+// public:
+//     int largestRectangleArea(vector<int>& heights) {
+//         const int n = heights.size();
+//
+//         vector<int> left(n, 0);
+//         vector<int> right(n, 0);
+//         stack<int> st;
+//
+//         for (int i = 0; i < n; i++) {
+//             while (st.size() && heights[st.top()] >= heights[i]) {
+//                 st.pop();
+//             }
+//
+//             if (st.size()) {
+//                 left[i] = st.top() + 1;
+//             } else {
+//                 left[i] = 0;
+//             }
+//
+//             st.push(i);
+//         }
+//
+//         while (st.size()) {
+//             st.pop();
+//         }
+//
+//         for (int i = n - 1; i >= 0; i--) {
+//             while (st.size() && heights[st.top()] >= heights[i]) {
+//                 st.pop();
+//             }
+//
+//             if (st.size()) {
+//                 right[i] = st.top() - 1;
+//             } else {
+//                 right[i] = n - 1;
+//             }
+//
+//             st.push(i);
+//         }
+//
+//         int res = 0;
+//         for (int i = 0; i < n; i++) {
+//             res = max(res, (right[i] - left[i] + 1) * heights[i]);
+//         }
+//
+//         return res;
+//     }
+// };
